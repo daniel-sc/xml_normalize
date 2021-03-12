@@ -11,6 +11,7 @@ program
     .option('-o, --output-file <outputFile>', 'output file - if not provided result is printed to stdout')
     .option('-s, --sort-path <sortPath>', 'path to sort of form: "ELEMENT.SUB_ELEMENT[INDEX].ATTRIBUTE" - e.g. "html.head[0].script.src"')
     .option('-r, --remove-path <removePath>', 'path to remove elements: "ELEMENT.SUB_ELEMENT[].SUB_SUB_ELEMENT" - e.g. "html.head[].script"')
+    .option('-t, --trim', 'Trim the whitespace at the beginning and end of text nodes', true)
     .option('-d, --debug', 'enable debug output', false);
 
 program.parse();
@@ -20,32 +21,12 @@ if (!options.debug) {
     console.debug = () => null;
 }
 
-execute(options.inputFile, options.outputFile, options.sortPath, options.removePath).then(() => console.debug('done'));
+execute(options.inputFile, options.outputFile, options.sortPath, options.removePath, options.trim).then(() => console.debug('done'));
 
-
-function sort(parsed: any, sortPath: string, sortAttribute: string) {
-    console.debug(`sorting path=${sortPath} attribute=${sortAttribute}`);
-    const sortArray: any[] = getNestedAttribute(parsed, sortPath);
-    console.debug(`sort: ${util.inspect(sortArray, false, null)}`);
-    sortArray.sort((a, b) => `${a.$[sortAttribute]}`.localeCompare(`${b.$[sortAttribute]}`))
-    console.debug(`sorted: ${util.inspect(sortArray, false, null)}`);
-    return parsed;
-}
-
-function remove(parsed: any, removePath: string) {
-    const [path, element] = splitOnLast(removePath, '.');
-    console.debug(`removing path=${path} element=${element}`);
-    const elements = getNestedAttributes(parsed, path);
-    console.debug('elements: ' + util.inspect(elements, false, null));
-    elements.forEach(e => delete e[element]);
-    console.debug('elements deleted: ' + util.inspect(elements, false, null));
-    return parsed;
-}
-
-async function execute(inFilename: string, outFilename: string | undefined, sortPath: string | undefined, removePath: string | undefined): Promise<void> {
+async function execute(inFilename: string, outFilename: string | undefined, sortPath: string | undefined, removePath: string | undefined, trim: boolean): Promise<void> {
     console.debug(`parsing ${inFilename}..`);
     const inFileContent = fs.readFileSync(inFilename);
-    const parser = new Parser({});
+    const parser = new Parser({trim});
     const inParsed = await parser.parseStringPromise(inFileContent);
 
     console.debug(`parsed: ${util.inspect(inParsed, false, null)}`);
@@ -76,3 +57,22 @@ async function execute(inFilename: string, outFilename: string | undefined, sort
     }
 }
 
+
+function sort(parsed: any, sortPath: string, sortAttribute: string) {
+    console.debug(`sorting path=${sortPath} attribute=${sortAttribute}`);
+    const sortArray: any[] = getNestedAttribute(parsed, sortPath);
+    console.debug(`sort: ${util.inspect(sortArray, false, null)}`);
+    sortArray.sort((a, b) => `${a.$[sortAttribute]}`.localeCompare(`${b.$[sortAttribute]}`))
+    console.debug(`sorted: ${util.inspect(sortArray, false, null)}`);
+    return parsed;
+}
+
+function remove(parsed: any, removePath: string) {
+    const [path, element] = splitOnLast(removePath, '.');
+    console.debug(`removing path=${path} element=${element}`);
+    const elements = getNestedAttributes(parsed, path);
+    console.debug('elements: ' + util.inspect(elements, false, null));
+    elements.forEach(e => delete e[element]);
+    console.debug('elements deleted: ' + util.inspect(elements, false, null));
+    return parsed;
+}

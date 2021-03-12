@@ -1,11 +1,11 @@
 {
   "name": "xml_normalize",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Normalizes xml files, by sorting siblings based on provided attribute and applying indentation.",
   "main": "dist/index.js",
   "scripts": {
     "start": "tsc && node dist/index.js --help",
-    "run-examples": "tsc && node dist/index.js -i examples/messages.xlf -o examples/messages2.xlf -s xliff.file[0].unit.id -r xliff.file[].unit[].notes",
+    "run-examples": "tsc && node dist/index.js -i examples/messages.xlf -o examples/messages2.xlf -s xliff.file[0].unit.id -r xliff.file[].unit[].notes -n",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

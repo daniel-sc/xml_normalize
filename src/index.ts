@@ -4,6 +4,7 @@ import * as util from 'util';
 
 import {Command} from 'commander';
 import {getNestedAttribute, getNestedAttributes, splitOnLast} from './objectUtils';
+import * as os from 'os';
 
 const program = new Command();
 program
@@ -12,6 +13,7 @@ program
     .option('-s, --sort-path <sortPath>', 'path to sort of form: "ELEMENT.SUB_ELEMENT[INDEX].ATTRIBUTE" - e.g. "html.head[0].script.src"')
     .option('-r, --remove-path <removePath>', 'path to remove elements: "ELEMENT.SUB_ELEMENT[].SUB_SUB_ELEMENT" - e.g. "html.head[].script"')
     .option('-t, --trim', 'Trim the whitespace at the beginning and end of text nodes', true)
+    .option('-n, --normalize-whitespace', 'Trim whitespaces inside text nodes', false)
     .option('-d, --debug', 'enable debug output', false);
 
 program.parse();
@@ -21,12 +23,12 @@ if (!options.debug) {
     console.debug = () => null;
 }
 
-execute(options.inputFile, options.outputFile, options.sortPath, options.removePath, options.trim).then(() => console.debug('done'));
+execute(options.inputFile, options.outputFile, options.sortPath, options.removePath, options.trim, options.normalizeWhitespace).then(() => console.debug('done'));
 
-async function execute(inFilename: string, outFilename: string | undefined, sortPath: string | undefined, removePath: string | undefined, trim: boolean): Promise<void> {
+async function execute(inFilename: string, outFilename: string | undefined, sortPath: string | undefined, removePath: string | undefined, trim: boolean, normalizeWhitespace: boolean): Promise<void> {
     console.debug(`parsing ${inFilename}..`);
-    const inFileContent = fs.readFileSync(inFilename);
-    const parser = new Parser({trim});
+    const inFileContent = fs.readFileSync(inFilename, {encoding: 'utf8'});
+    const parser = new Parser({trim, normalize: normalizeWhitespace});
     const inParsed = await parser.parseStringPromise(inFileContent);
 
     console.debug(`parsed: ${util.inspect(inParsed, false, null)}`);
@@ -46,12 +48,15 @@ async function execute(inFilename: string, outFilename: string | undefined, sort
         removed = sorted;
     }
 
-    const builder = new Builder({xmldec: {'version': '1.0', 'encoding': 'UTF-8'}});
+    const builder = new Builder({
+        xmldec: {'version': '1.0', 'encoding': 'UTF-8'},
+        renderOpts: {pretty: true, indent: ' ', newline: os.EOL}
+    });
     const outString = builder.buildObject(removed);
 
     if (outFilename) {
         console.debug(`writing output to file ${outFilename}`);
-        fs.writeFileSync(outFilename, outString);
+        fs.writeFileSync(outFilename, outString, {encoding: 'utf8'});
     } else {
         console.log(outString);
     }

@@ -13,6 +13,10 @@
     "sort",
     "normalize"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daniel-sc/xml_normalize.git"
+  },
   "author": "daniel-schreiber@gmx.de",
   "license": "ISC",
   "devDependencies": {

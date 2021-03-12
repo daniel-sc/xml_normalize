@@ -14,7 +14,7 @@ program
     .option('-r, --remove-path <removePath>', 'path to remove elements: "ELEMENT.SUB_ELEMENT[].SUB_SUB_ELEMENT" - e.g. "html.head[].script"')
     .option('-t, --trim', 'Trim the whitespace at the beginning and end of text nodes', true)
     .option('-a, --attribute-trim', 'Trim the whitespace at the beginning and end of attribute values', true)
-    .option('-n, --normalize-whitespace', 'Trim whitespaces inside text nodes', false)
+    .option('-n, --normalize-whitespace', 'Trim whitespaces inside text nodes and attribute values', false)
     .option('-d, --debug', 'enable debug output', false);
 
 program.parse();
@@ -32,8 +32,11 @@ async function execute(inFilename: string, outFilename: string | undefined, sort
     const parser = new Parser({
         trim,
         // normalize: normalizeWhitespace, // not working for some cases with line breaks..
-        attrValueProcessors: attributeTrim ? [(value => value?.trim())] : undefined,
-        valueProcessors: normalizeWhitespace ? [value => value.replace(/\s{2,}/g, ' ')] : undefined
+        attrValueProcessors: [
+            ...(attributeTrim ? [((value: string) => value?.trim())] : []),
+            ...(normalizeWhitespace ? [((value: string) => value?.replace(/\s{2,}/g, ' '))] : [])
+        ],
+        valueProcessors: normalizeWhitespace ? [value => value?.replace(/\s{2,}/g, ' ')] : undefined
     });
     const inParsed = await parser.parseStringPromise(inFileContent);
 

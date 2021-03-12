@@ -13,6 +13,7 @@ program
     .option('-s, --sort-path <sortPath>', 'path to sort of form: "ELEMENT.SUB_ELEMENT[INDEX].ATTRIBUTE" - e.g. "html.head[0].script.src"')
     .option('-r, --remove-path <removePath>', 'path to remove elements: "ELEMENT.SUB_ELEMENT[].SUB_SUB_ELEMENT" - e.g. "html.head[].script"')
     .option('-t, --trim', 'Trim the whitespace at the beginning and end of text nodes', true)
+    .option('-a, --attribute-trim', 'Trim the whitespace at the beginning and end of attribute values', true)
     .option('-n, --normalize-whitespace', 'Trim whitespaces inside text nodes', false)
     .option('-d, --debug', 'enable debug output', false);
 
@@ -23,12 +24,17 @@ if (!options.debug) {
     console.debug = () => null;
 }
 
-execute(options.inputFile, options.outputFile, options.sortPath, options.removePath, options.trim, options.normalizeWhitespace).then(() => console.debug('done'));
+execute(options.inputFile, options.outputFile, options.sortPath, options.removePath, options.trim, options.normalizeWhitespace, options.attributeTrim).then(() => console.debug('done'));
 
-async function execute(inFilename: string, outFilename: string | undefined, sortPath: string | undefined, removePath: string | undefined, trim: boolean, normalizeWhitespace: boolean): Promise<void> {
+async function execute(inFilename: string, outFilename: string | undefined, sortPath: string | undefined, removePath: string | undefined, trim: boolean, normalizeWhitespace: boolean, attributeTrim: boolean): Promise<void> {
     console.debug(`parsing ${inFilename}..`);
     const inFileContent = fs.readFileSync(inFilename, {encoding: 'utf8'});
-    const parser = new Parser({trim, normalize: normalizeWhitespace});
+    const parser = new Parser({
+        trim,
+        // normalize: normalizeWhitespace, // not working for some cases with line breaks..
+        attrValueProcessors: attributeTrim ? [(value => value?.trim())] : undefined,
+        valueProcessors: normalizeWhitespace ? [value => value.replace(/\s{2,}/g, ' ')] : undefined
+    });
     const inParsed = await parser.parseStringPromise(inFileContent);
 
     console.debug(`parsed: ${util.inspect(inParsed, false, null)}`);

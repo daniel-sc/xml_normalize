@@ -17,6 +17,10 @@
     "type": "git",
     "url": "https://github.com/daniel-sc/xml_normalize.git"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "author": "daniel-schreiber@gmx.de",
   "license": "ISC",
   "devDependencies": {

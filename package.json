@@ -3,6 +3,9 @@
   "version": "0.4.0",
   "description": "Normalizes xml files, by sorting siblings based on provided attribute and applying indentation.",
   "main": "dist/src/index.js",
+  "bin": {
+    "xml_normalize": "dist/src/index.js"
+  },
   "types": "dist/src/xmlNormalize.d.ts",
   "scripts": {
     "start": "tsc && node dist/index.js --help",

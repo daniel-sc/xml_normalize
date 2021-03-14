@@ -15,14 +15,17 @@ This can be used as a post-/pre-processing step to keep diffs small for generate
 Execute with NodeJS:
 
 ```text
-Usage: index [options]
+Usage: npx xml_normalize [options]
 
 Options:
   -i, --input-file <inputFile>    input file
   -o, --output-file <outputFile>  output file - if not provided result is printed to stdout
-  -s, --sort-path <sortPath>      path to sort of form: "ELEMENT.SUB_ELEMENT[INDEX].ATTRIBUTE" - e.g. "html.head[0].script.src"
-  -r, --remove-path <removePath>  path to remove elements: "ELEMENT.SUB_ELEMENT[].SUB_SUB_ELEMENT" - e.g. "html.head[].script"
-  -t, --trim                      Trim the whitespace at the beginning and end of text nodes (default: true)
+  -s, --sort-path <sortPath>      path to sort of form: "ROOT.ELEMENT[].SUB_ELEMENT[INDEX]@ATTRIBUTE" - e.g. "html.head[0].script@src"
+  -r, --remove-path <removePath>  path to remove elements: "ROOT.SUB_ELEMENT[0].SUB_SUB_ELEMENT[]" - e.g. "html.head[].script[]"
+  -t, --trim                      Trim the whitespace at the beginning and end of text nodes (trims only pure text nodes) (default: true)
+  -tf, --trim-force               Trim the whitespace at the beginning and end of text nodes (trims as well text adjacent to nested nodes). Implies -t (default: false)
+  -a, --attribute-trim            Trim the whitespace at the beginning and end of attribute values (default: true)
+  -n, --normalize-whitespace      Trim whitespaces inside text nodes and attribute values (implies -t and -a) (default: false)
   -d, --debug                     enable debug output (default: false)
   -h, --help                      display help for command
 ```

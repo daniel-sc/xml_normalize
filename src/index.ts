@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as fs from 'fs';
 
 import {Command} from 'commander';
@@ -13,9 +15,8 @@ program
     .option('-tf, --trim-force', 'Trim the whitespace at the beginning and end of text nodes (trims as well text adjacent to nested nodes). Implies -t', false)
     .option('-a, --attribute-trim', 'Trim the whitespace at the beginning and end of attribute values', true)
     .option('-n, --normalize-whitespace', 'Trim whitespaces inside text nodes and attribute values (implies -t and -a)', false)
+    .option('-p, --pretty', 'Pretty format output', true)
     .option('-d, --debug', 'enable debug output', false);
-
-// todo pretty print
 
 program.parse();
 const options = program.opts();
@@ -34,7 +35,8 @@ const outString = xmlNormalize({
     trim: options.trim,
     trimForce: options.trimForce,
     attributeTrim: options.attributeTrim,
-    normalizeWhitespace: options.normalizeWhitespace
+    normalizeWhitespace: options.normalizeWhitespace,
+    pretty: options.pretty
 });
 
 if (options.outputFile) {

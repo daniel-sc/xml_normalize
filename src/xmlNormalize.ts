@@ -16,6 +16,8 @@ export interface XmlNormalizeOptions {
     attributeTrim?: boolean;
     /** default: `false` */
     normalizeWhitespace?: boolean;
+    /** default: `true` */
+    pretty?: boolean;
 }
 
 function trimTextNodes(doc: XmlDocument, trimMixed: boolean, normalize: boolean): XmlDocument {
@@ -55,6 +57,11 @@ function trimAttributeValues(doc: XmlDocument, normalize: boolean) {
     return doc;
 }
 
+function pretty(doc: XmlDocument) {
+    // TODO
+    return doc;
+}
+
 export function xmlNormalize(options: XmlNormalizeOptions) {
     let doc = new XmlDocument(options.in);
     console.log(`parsed2: ${doc.toString({preserveWhitespace: true, compressed: true, html: false})}`);
@@ -76,6 +83,10 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
 
     if ((options.attributeTrim ?? true) || (options.normalizeWhitespace ?? false)) {
         doc = trimAttributeValues(doc, options.normalizeWhitespace ?? false);
+    }
+
+    if (options.pretty ?? true) {
+        doc = pretty(doc);
     }
 
     return doc.toString({preserveWhitespace: true, compressed: true});

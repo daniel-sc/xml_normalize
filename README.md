@@ -1,3 +1,6 @@
+![npm](https://img.shields.io/npm/v/xml_normalize)
+
+
 # XML Normalize
 
 This program allows normalizing arbitrary xml files by:

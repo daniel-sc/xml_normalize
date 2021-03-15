@@ -1,12 +1,15 @@
 ![npm](https://img.shields.io/npm/v/xml_normalize)
-
+[![Coverage Status](https://coveralls.io/repos/github/daniel-sc/xml_normalize/badge.svg?branch=main)](https://coveralls.io/github/daniel-sc/xml_normalize?branch=main)
 
 # XML Normalize
 
-This program allows normalizing arbitrary xml files by:
+This program allows normalizing arbitrary xml files.
+Normalization can be configured:
 
 * sort sibling elements based on some attribute value
 * remove unwanted nodes
+* trim texts
+* normalize whitespaces/line breaks
 
 This can be used as a post-/pre-processing step to keep diffs small for generated xml files.
 

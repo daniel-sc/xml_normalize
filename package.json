@@ -12,6 +12,7 @@
     "run-examples": "tsc && node dist/index.js -i examples/messages.xlf -o examples/messages2.xlf -s xliff.file[0].unit.id -r xliff.file[].unit[].notes -n",
     "run-examples2": "tsc && node dist/index.js -i examples/messages.xlf -o examples/messages2.xlf -s note.somenotes.anote.id -r note.somenotes.anote[].dummy -d -n",
     "test": "jest",
+    "test-coverage": "jest --coverage",
     "build": "tsc"
   },
   "keywords": [

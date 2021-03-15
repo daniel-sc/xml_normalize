@@ -5,8 +5,7 @@ import * as fs from 'fs';
 import {Command} from 'commander';
 import {xmlNormalize} from './xmlNormalize';
 
-const program = new Command();
-program
+const options = new Command()
     .requiredOption('-i, --input-file <inputFile>', 'input file')
     .option('-o, --output-file <outputFile>', 'output file - if not provided result is printed to stdout')
     .option('-s, --sort-path <sortPath>', 'path to sort of form: "ROOT.ELEMENT[].SUB_ELEMENT[INDEX]@ATTRIBUTE" - e.g. "html.head[0].script@src"')
@@ -14,12 +13,11 @@ program
     .option('-t, --trim', 'Trim the whitespace at the beginning and end of text nodes (trims only pure text nodes)', true)
     .option('-tf, --trim-force', 'Trim the whitespace at the beginning and end of text nodes (trims as well text adjacent to nested nodes). Implies -t', false)
     .option('-a, --attribute-trim', 'Trim the whitespace at the beginning and end of attribute values', true)
-    .option('-n, --normalize-whitespace', 'Trim whitespaces inside text nodes and attribute values (implies -t and -a)', false)
+    .option('-n, --normalize-whitespace', 'Normalize whitespaces inside text nodes and attribute values (implies -t and -a)', false)
     .option('-p, --pretty', 'Pretty format output', true)
-    .option('-d, --debug', 'enable debug output', false);
-
-program.parse();
-const options = program.opts();
+    .option('-d, --debug', 'enable debug output', false)
+    .parse()
+    .opts();
 
 if (!options.debug) {
     console.debug = () => null;

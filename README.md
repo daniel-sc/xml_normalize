@@ -28,7 +28,11 @@ Options:
   -t, --trim                      Trim the whitespace at the beginning and end of text nodes (trims only pure text nodes) (default: true)
   -tf, --trim-force               Trim the whitespace at the beginning and end of text nodes (trims as well text adjacent to nested nodes). Implies -t (default: false)
   -a, --attribute-trim            Trim the whitespace at the beginning and end of attribute values (default: true)
-  -n, --normalize-whitespace      Trim whitespaces inside text nodes and attribute values (implies -t and -a) (default: false)
+  -n, --normalize-whitespace      Normalize whitespaces inside text nodes and attribute values (implies -t and -a) (default: false)
   -d, --debug                     enable debug output (default: false)
   -h, --help                      display help for command
 ```
+
+## Contribute
+
+PRs always welcome :-)

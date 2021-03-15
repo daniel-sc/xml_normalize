@@ -233,8 +233,21 @@ describe('xmlNormalize', () => {
                     ' <b>\n' +
                     '  <node/>\n' +
                     ' </b>\n' +
-                    '</root>')
+                    '</root>');
 
+        });
+        test('pretty with mixed nodes and text', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                pretty: true,
+                in: '<root>   <a>mixed<node>a</node><node>b</node></a>  <b>  <node/>  </b>\n\n\n</root>'
+            }))
+                .toEqual('<root>\n' +
+                    ' <a>mixed<node>a</node><node>b</node></a>\n' +
+                    ' <b>\n' +
+                    '  <node/>\n' +
+                    ' </b>\n' +
+                    '</root>')
         });
     });
 });

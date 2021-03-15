@@ -6,22 +6,6 @@ export function splitOnLast(str: string, sep: string): [first: string, rest: str
     return [str.substr(0, indexOfLast), str.substr(indexOfLast + 1)];
 }
 
-export function getNestedAttribute(obj: any, path: string): any {
-    let o = obj;
-    path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-    path = path.replace(/^\./, '');           // strip a leading dot
-    const a = path.split('.');
-    for (let i = 0, n = a.length; i < n; ++i) {
-        const k = a[i];
-        if (k in o) {
-            o = o[k];
-        } else {
-            return;
-        }
-    }
-    return o;
-}
-
 export function splitNameAndIndex(nameAndOptionalIndex: string): [name: string, index: number | null] {
     const match = nameAndOptionalIndex.match(/^(.+)\[(\d*)]$/);
     if (!match) { // implicit 0 index

@@ -207,4 +207,14 @@ describe('xmlNormalize', () => {
 
         });
     });
+
+    describe('xml declaration', () => {
+        test('should retain declaration', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                in: '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n<root/>'
+            }))
+                .toEqual('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n<root/>');
+        });
+    });
 });

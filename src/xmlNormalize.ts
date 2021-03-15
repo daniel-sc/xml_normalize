@@ -89,7 +89,10 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
         doc = pretty(doc);
     }
 
-    return doc.toString({preserveWhitespace: true, compressed: true});
+    const xmlDecMatch = options.in.match(/^<\?xml .*[^>]\s*/i);
+    const xmlDeclaration = xmlDecMatch ? xmlDecMatch[0] : '';
+
+    return xmlDeclaration + doc.toString({preserveWhitespace: true, compressed: true});
 }
 
 

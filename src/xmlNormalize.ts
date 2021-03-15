@@ -1,4 +1,4 @@
-import {XmlDocument, XmlElement, XmlNode} from 'xmldoc';
+import {XmlDocument, XmlElement, XmlNode, XmlTextNode} from 'xmldoc';
 import util from 'util';
 import {allChildren, getNestedAttributes, splitNameAndIndex, splitOnLast} from './objectUtils';
 
@@ -57,9 +57,39 @@ function trimAttributeValues(doc: XmlDocument, normalize: boolean) {
     return doc;
 }
 
+function addPrettyWhitespace(doc: XmlElement, indent: number) {
+    // skip if mixed text and nodes:
+    if (doc.children.some(c => c.type === 'text')) {
+        return;
+    }
+
+    if (doc.children.length) {
+        for (let i = doc.children.length - 1; i >= 0; i--) {
+            doc.children.splice(i, 0, createTextNode('\n' + ' '.repeat(indent + 1)))
+        }
+        doc.children.push(createTextNode('\n' + ' '.repeat(indent)));
+        doc.firstChild = doc.children[0];
+        doc.lastChild = doc.children[doc.children.length - 1];
+
+        doc.children.forEach(c => c.type === 'element' ? addPrettyWhitespace(c, indent + 1) : null);
+    }
+
+}
+
 function pretty(doc: XmlDocument) {
-    // TODO
+    // remove all whitespace text:
+    for (const node of allChildren(doc)) {
+        if (node.type === 'element') {
+            removeChildren(node, ...node.children.filter(c => isWhiteSpace(c)));
+        }
+    }
+    addPrettyWhitespace(doc, 0);
     return doc;
+}
+
+/** workaround as XmlTextNode is not exported */
+function createTextNode(str: string): XmlTextNode {
+    return new XmlDocument(`<root>${str}</root>`).firstChild as XmlTextNode;
 }
 
 export function xmlNormalize(options: XmlNormalizeOptions) {

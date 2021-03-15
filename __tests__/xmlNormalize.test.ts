@@ -1,6 +1,6 @@
 import {xmlNormalize, XmlNormalizeOptions} from '../src/xmlNormalize';
 
-const defaultOptions: Partial<XmlNormalizeOptions> = {}
+const defaultOptions: Partial<XmlNormalizeOptions> = {pretty: false}
 
 describe('xmlNormalize', () => {
     test('simple round trip', () => {
@@ -215,6 +215,26 @@ describe('xmlNormalize', () => {
                 in: '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n<root/>'
             }))
                 .toEqual('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n<root/>');
+        });
+    });
+
+    describe('pretty', () => {
+        test('simple pretty', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                pretty: true,
+                in: '<root>   <a>   <node>a</node>  <node>b</node>  </a>  <b>  <node/>  </b>\n\n\n</root>'
+            }))
+                .toEqual('<root>\n' +
+                    ' <a>\n' +
+                    '  <node>a</node>\n' +
+                    '  <node>b</node>\n' +
+                    ' </a>\n' +
+                    ' <b>\n' +
+                    '  <node/>\n' +
+                    ' </b>\n' +
+                    '</root>')
+
         });
     });
 });

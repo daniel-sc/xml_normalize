@@ -65,9 +65,9 @@ function addPrettyWhitespace(doc: XmlElement, indent: number) {
 
     if (doc.children.length) {
         for (let i = doc.children.length - 1; i >= 0; i--) {
-            doc.children.splice(i, 0, createTextNode('\n' + ' '.repeat(indent + 1)))
+            doc.children.splice(i, 0, createTextNode('\n' + '  '.repeat(indent + 1)))
         }
-        doc.children.push(createTextNode('\n' + ' '.repeat(indent)));
+        doc.children.push(createTextNode('\n' + '  '.repeat(indent)));
         doc.firstChild = doc.children[0];
         doc.lastChild = doc.children[doc.children.length - 1];
 
@@ -94,12 +94,12 @@ function createTextNode(str: string): XmlTextNode {
 
 export function xmlNormalize(options: XmlNormalizeOptions) {
     let doc = new XmlDocument(options.in);
-    console.log(`parsed2: ${doc.toString({preserveWhitespace: true, compressed: true, html: false})}`);
+    console.debug(`parsed: ${doc.toString({preserveWhitespace: true, compressed: true, html: false})}`);
 
     // console.debug(`parsed: ${util.inspect(inParsed, false, null)}`);
 
     if (options.sortPath) {
-        const [sortP, sortAttr] = splitOnLast(options.sortPath, '.');
+        const [sortP, sortAttr] = splitOnLast(options.sortPath, '@');
         doc = sort(doc, sortP, sortAttr);
     }
 
@@ -128,26 +128,27 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
 
 function sort(parsed: XmlDocument, sortPath: string, sortAttribute: string) {
     const path = sortPath.substr(sortPath.indexOf('.') + 1);
-    const [parentPath, nodeName] = splitOnLast(path, '.');
+    const [parentPath, nodeName] = splitOnLast(path.replace(/\[]$/, ''), '.');
     console.debug(`sorting path=${parentPath} nodeName=${nodeName} attribute=${sortAttribute}`);
-    const parent = parentPath ? parsed.descendantWithPath(parentPath) : parsed;
-    if (!parent) {
+    const parents: XmlElement[] = parentPath ? getNestedAttributes(parsed, parentPath) : [parsed];
+    if (!parents.length) {
         console.warn(`sort path not found!`);
         return parsed;
     }
-    const textNodesWithIndex = parent.children.map((e, i) => ({index: i, el: e})).filter(x => x.el.type !== 'element');
-    parent.children = parent.children.filter(e => e.type === 'element');
-    parent.children.sort((a, b) => {
-        console.log(`comparing a=${a} to b=${b}`);
-        if (a.type === 'element' && b.type === 'element' && a.name === nodeName && b.name === nodeName) {
-            return a.attr[sortAttribute].localeCompare(b.attr[sortAttribute]);
-        } else {
-            return 0;
-        }
+    parents.forEach(parent => {
+        const textNodesWithIndex = parent.children.map((e, i) => ({index: i, el: e})).filter(x => x.el.type !== 'element');
+        parent.children = parent.children.filter(e => e.type === 'element');
+        parent.children.sort((a, b) => {
+            if (a.type === 'element' && b.type === 'element' && a.name === nodeName && b.name === nodeName) {
+                return a.attr[sortAttribute].localeCompare(b.attr[sortAttribute]);
+            } else {
+                return 0;
+            }
+        });
+        textNodesWithIndex.forEach(nodeWithIndex => parent.children.splice(nodeWithIndex.index, 0, nodeWithIndex.el));
+        console.debug('sorted: ' + parent.children)
+        parent.firstChild = parent.children[0];
     });
-    textNodesWithIndex.forEach(nodeWithIndex => parent.children.splice(nodeWithIndex.index, 0, nodeWithIndex.el));
-    console.log('sorted: ' + parent.children)
-    parent.firstChild = parent.children[0];
     return parsed;
 }
 
@@ -158,9 +159,8 @@ function sort(parsed: XmlDocument, sortPath: string, sortAttribute: string) {
  * @param children
  */
 function removeChildren(node: XmlElement, ...children: XmlNode[]): void {
-    console.log(`removeChildren: ` + children[0]);
     const removeIndexes = new Set<number>(node.children.map((c, i) => children.indexOf(c) >= 0 ? i : null).filter(x => x !== null) as number[]);
-    console.log('remove indexes: ' + removeIndexes);
+    console.debug('remove indexes: ' + removeIndexes);
     node.children = node.children.filter((c, i) => !removeIndexes.has(i) && (!removeIndexes.has(i + 1) || !isWhiteSpace(c)));
     if (node.children.length === 1 && isWhiteSpace(node.children[0])) {
         node.children = [];
@@ -178,9 +178,8 @@ function remove(parsed: XmlDocument, removePath: string) {
     console.debug(`removing path=${path} element=${element}`);
     const elements = getNestedAttributes(parsed, path.substr(path.indexOf('.') + 1));
     console.debug('elements: ' + util.inspect(elements, false, null));
-    // TODO remove text node before (if whitespace)
     const [tagName, tagIndex] = splitNameAndIndex(element);
-    console.log('removing tagIndex=' + tagIndex);
+    console.debug('removing tagIndex=' + tagIndex);
     if (tagIndex != null) {
         elements.forEach(e => {
             removeChildren(e, e.children.filter(c => c.type === 'element' && c.name === tagName)[tagIndex]);

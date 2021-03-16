@@ -2,7 +2,7 @@ import {XmlElement, XmlNode} from 'xmldoc';
 import util from 'util';
 
 export function splitOnLast(str: string, sep: string): [first: string, rest: string] {
-    const indexOfLast = str.lastIndexOf('.');
+    const indexOfLast = str.lastIndexOf(sep);
     return [str.substr(0, indexOfLast), str.substr(indexOfLast + 1)];
 }
 

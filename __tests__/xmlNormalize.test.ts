@@ -12,17 +12,38 @@ describe('xmlNormalize', () => {
         test('simple sort', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                sortPath: 'root.subnode.node.id',
+                sortPath: 'root.subnode[0].node@id',
+                in: '<root><subnode><node id="2">text2</node><node id="1">text1</node></subnode></root>'
+            })).toEqual('<root><subnode><node id="1">text1</node><node id="2">text2</node></subnode></root>');
+        });
+        test('simple sort with implicit index', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                sortPath: 'root.subnode.node@id',
                 in: '<root><subnode><node id="2">text2</node><node id="1">text1</node></subnode></root>'
             })).toEqual('<root><subnode><node id="1">text1</node><node id="2">text2</node></subnode></root>');
         });
         test('first level sort', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                sortPath: 'root.node.id',
+                sortPath: 'root.node@id',
                 in: '<root><node id="2">text2</node><node id="1">text1</node></root>'
             })).toEqual('<root><node id="1">text1</node><node id="2">text2</node></root>');
         });
+        test('multi sub level sort', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                sortPath: 'root.subnode[].node@id',
+                in: '<root>' +
+                    '<subnode><node id="2">text2</node><node id="1">text1</node></subnode>' +
+                    '<subnode><node id="5">text2</node><node id="4">text1</node></subnode>' +
+                    '</root>'
+            })).toEqual('<root>' +
+                '<subnode><node id="1">text1</node><node id="2">text2</node></subnode>' +
+                '<subnode><node id="4">text1</node><node id="5">text2</node></subnode>' +
+                '</root>');
+        });
+
     });
 
     describe('remove', () => {
@@ -216,6 +237,13 @@ describe('xmlNormalize', () => {
             }))
                 .toEqual('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n<root/>');
         });
+        test('should retain declaration2', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                in: '<?xml version="1.0" encoding="UTF-8" ?>\n<root/>'
+            }))
+                .toEqual('<?xml version="1.0" encoding="UTF-8" ?>\n<root/>');
+        });
     });
 
     describe('pretty', () => {
@@ -226,13 +254,13 @@ describe('xmlNormalize', () => {
                 in: '<root>   <a>   <node>a</node>  <node>b</node>  </a>  <b>  <node/>  </b>\n\n\n</root>'
             }))
                 .toEqual('<root>\n' +
-                    ' <a>\n' +
-                    '  <node>a</node>\n' +
-                    '  <node>b</node>\n' +
-                    ' </a>\n' +
-                    ' <b>\n' +
-                    '  <node/>\n' +
-                    ' </b>\n' +
+                    '  <a>\n' +
+                    '    <node>a</node>\n' +
+                    '    <node>b</node>\n' +
+                    '  </a>\n' +
+                    '  <b>\n' +
+                    '    <node/>\n' +
+                    '  </b>\n' +
                     '</root>');
 
         });
@@ -242,11 +270,11 @@ describe('xmlNormalize', () => {
                 pretty: true,
                 in: '<root>   <a>mixed<node>a</node><node>b</node></a>  <b>  <node/>  </b>\n\n\n</root>'
             }))
-                .toEqual('<root>\n' +
-                    ' <a>mixed<node>a</node><node>b</node></a>\n' +
-                    ' <b>\n' +
-                    '  <node/>\n' +
-                    ' </b>\n' +
+            .toEqual('<root>\n' +
+                    '  <a>mixed<node>a</node><node>b</node></a>\n' +
+                    '  <b>\n' +
+                    '    <node/>\n' +
+                    '  </b>\n' +
                     '</root>')
         });
     });

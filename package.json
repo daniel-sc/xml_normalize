@@ -1,6 +1,6 @@
 {
   "name": "xml_normalize",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Normalizes xml files, by sorting siblings based on provided attribute and applying indentation.",
   "main": "dist/src/index.js",
   "bin": {

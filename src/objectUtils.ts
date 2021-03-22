@@ -3,7 +3,7 @@ import util from 'util';
 
 export function splitOnLast(str: string, sep: string): [first: string, rest: string] {
     const indexOfLast = str.lastIndexOf(sep);
-    return [str.substr(0, indexOfLast), str.substr(indexOfLast + 1)];
+    return [str.substr(0, indexOfLast), str.substr(indexOfLast + sep.length)];
 }
 
 export function splitNameAndIndex(nameAndOptionalIndex: string): [name: string, index: number | null] {
@@ -15,6 +15,9 @@ export function splitNameAndIndex(nameAndOptionalIndex: string): [name: string, 
     }
 }
 
+/**
+ * @deprecated use Evaluator
+ */
 export function* allChildren(el: XmlNode, includeEl = true): IterableIterator<XmlNode> {
     if (includeEl) {
         yield el;

@@ -1,6 +1,6 @@
 import {XmlDocument, XmlElement, XmlNode, XmlTextNode} from 'xmldoc';
-import util from 'util';
-import {allChildren, getNestedAttributes, splitNameAndIndex, splitOnLast} from './objectUtils';
+import {allChildren, getNestedAttributes, splitOnLast} from './objectUtils';
+import {Evaluator} from './xpath/simpleXPath';
 
 export interface XmlNormalizeOptions {
     in: string;
@@ -99,7 +99,7 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
     // console.debug(`parsed: ${util.inspect(inParsed, false, null)}`);
 
     if (options.sortPath) {
-        const [sortP, sortAttr] = splitOnLast(options.sortPath, '@');
+        const [sortP, sortAttr] = splitOnLast(options.sortPath, '/@');
         doc = sort(doc, sortP, sortAttr);
     }
 
@@ -127,27 +127,31 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
 
 
 function sort(parsed: XmlDocument, sortPath: string, sortAttribute: string) {
-    const path = sortPath.substr(sortPath.indexOf('.') + 1);
-    const [parentPath, nodeName] = splitOnLast(path.replace(/\[]$/, ''), '.');
-    console.debug(`sorting path=${parentPath} nodeName=${nodeName} attribute=${sortAttribute}`);
-    const parents: XmlElement[] = parentPath ? getNestedAttributes(parsed, parentPath) : [parsed];
-    if (!parents.length) {
+    console.debug('sortAttribute: ', sortAttribute);
+    const evaluator = new Evaluator(parsed);
+    const sortElements = new Set<XmlElement>(evaluator.evalNodeSet(sortPath));
+    const parents = new Set<XmlElement>([...sortElements].map(s => evaluator.getParent(s)));
+    if (!parents.size) {
         console.warn(`sort path not found!`);
         return parsed;
     }
     parents.forEach(parent => {
-        const textNodesWithIndex = parent.children.map((e, i) => ({index: i, el: e})).filter(x => x.el.type !== 'element');
-        parent.children = parent.children.filter(e => e.type === 'element');
+        const doNotSortNodesWithIndex = parent.children.map((e, i) => ({
+            index: i,
+            el: e
+        })).filter(x => x.el.type !== 'element' || !sortElements.has(x.el));
+        parent.children = parent.children.filter(e => e.type === 'element' && sortElements.has(e));
         parent.children.sort((a, b) => {
-            if (a.type === 'element' && b.type === 'element' && a.name === nodeName && b.name === nodeName) {
+            if (a.type === 'element' && b.type === 'element') {
                 return a.attr[sortAttribute].localeCompare(b.attr[sortAttribute]);
             } else {
                 return 0;
             }
         });
-        textNodesWithIndex.forEach(nodeWithIndex => parent.children.splice(nodeWithIndex.index, 0, nodeWithIndex.el));
+        doNotSortNodesWithIndex.forEach(nodeWithIndex => parent.children.splice(nodeWithIndex.index, 0, nodeWithIndex.el));
         console.debug('sorted: ' + parent.children)
         parent.firstChild = parent.children[0];
+        parent.lastChild = parent.children[parent.children.length - 1];
     });
     return parsed;
 }
@@ -174,21 +178,11 @@ function isWhiteSpace(node: XmlNode): boolean {
 }
 
 function remove(parsed: XmlDocument, removePath: string) {
-    const [path, element] = splitOnLast(removePath, '.');
-    console.debug(`removing path=${path} element=${element}`);
-    const elements = getNestedAttributes(parsed, path.substr(path.indexOf('.') + 1));
-    console.debug('elements: ' + util.inspect(elements, false, null));
-    const [tagName, tagIndex] = splitNameAndIndex(element);
-    console.debug('removing tagIndex=' + tagIndex);
-    if (tagIndex != null) {
-        elements.forEach(e => {
-            removeChildren(e, e.children.filter(c => c.type === 'element' && c.name === tagName)[tagIndex]);
-        });
-    } else {
-        elements.forEach(e => {
-            removeChildren(e, ...e.children.filter(c => c.type === 'element' && c.name === tagName));
-        });
-    }
-    console.debug('elements deleted: ' + util.inspect(elements, false, null));
+    const evaluator = new Evaluator(parsed);
+    const removeElements = evaluator.evalNodeSet(removePath);
+    removeElements.forEach(r => {
+        const parent = evaluator.getParent(r);
+        removeChildren(parent, r)
+    });
     return parsed;
 }

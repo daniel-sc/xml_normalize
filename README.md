@@ -23,8 +23,8 @@ Usage: npx xml_normalize [options]
 Options:
   -i, --input-file <inputFile>    input file
   -o, --output-file <outputFile>  output file - if not provided result is printed to stdout
-  -s, --sort-path <sortPath>      path to sort of form: "ROOT.ELEMENT[].SUB_ELEMENT[INDEX]@ATTRIBUTE" - e.g. "html.head[0].script@src"
-  -r, --remove-path <removePath>  path to remove elements: "ROOT.SUB_ELEMENT[0].SUB_SUB_ELEMENT[]" - e.g. "html.head[].script[]"
+  -s, --sort-path <sortPath>      simple XPath that references an attribute to sort - e.g. "/html/head[1]/script@src"
+  -r, --remove-path <removePath>  simple XPath to remove elements - e.g. "/html/head[1]/script"
   --no-pretty                     Disable pretty format output
   --no-trim                       Disable trimming of whitespace at the beginning and end of text nodes (trims only pure text nodes)
   --no-attribute-trim             Disable trimming whitespace at the beginning and end of attribute values
@@ -57,7 +57,7 @@ Example:
 </root>
 ```
 
-`npx xml_normalize -s root.node[].child@id` will create:
+`npx xml_normalize -s /root/node/child@id` will create:
 
 ```xml
 <root>
@@ -92,7 +92,7 @@ Example:
 </root>
 ```
 
-`npx xml_normalize -r root.node[0].child[]` will create:
+`npx xml_normalize -r /root/node[1]/child` will create:
 
 ```xml
 <root>
@@ -148,15 +148,22 @@ Example:
 
 ### Paths for sorting and removing
 
-Paths are of the form
+Paths are a simple subset of XPaths.
 
 ```
-ROOT.NODE_NAME[INDEX].ANOTHER_NODE[]
+/ROOT/NODE_NAME[INDEX]/ANOTHER_NODE
 ```
 
-So specific children can be accessed by index (`[INDEX]`),
-or all children with a given tag name can be referred (`[]`).
-Instead of `NODE[0]` the shortcut `NODE` can be used.
+Supported:
+
+* Only absolute paths
+* Index access (note in XPath indices are 1-based!)
+* Simple predicates using the following functions (parameters can be string (double quotes) or XPaths):
+  * `starts-with(str,prefix)`
+  * `contains(str,contained)`
+* Node wildcard - e.g `/root/*` to select all nodes in `root` of any type.  
+* Attribute reference in last node - e.g. `/root/node@id`.
+
 
 ## What is this good for?
 

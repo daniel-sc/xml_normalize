@@ -12,28 +12,28 @@ describe('xmlNormalize', () => {
         test('simple sort', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                sortPath: 'root.subnode[0].node@id',
+                sortPath: '/root/subnode[1]/node/@id',
                 in: '<root><subnode><node id="2">text2</node><node id="1">text1</node></subnode></root>'
             })).toEqual('<root><subnode><node id="1">text1</node><node id="2">text2</node></subnode></root>');
         });
         test('simple sort with implicit index', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                sortPath: 'root.subnode.node@id',
+                sortPath: '/root/subnode[1]/node/@id',
                 in: '<root><subnode><node id="2">text2</node><node id="1">text1</node></subnode></root>'
             })).toEqual('<root><subnode><node id="1">text1</node><node id="2">text2</node></subnode></root>');
         });
         test('first level sort', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                sortPath: 'root.node@id',
+                sortPath: '/root/node/@id',
                 in: '<root><node id="2">text2</node><node id="1">text1</node></root>'
             })).toEqual('<root><node id="1">text1</node><node id="2">text2</node></root>');
         });
         test('multi sub level sort', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                sortPath: 'root.subnode[].node@id',
+                sortPath: '/root/subnode/node/@id',
                 in: '<root>' +
                     '<subnode><node id="2">text2</node><node id="1">text1</node></subnode>' +
                     '<subnode><node id="5">text2</node><node id="4">text1</node></subnode>' +
@@ -50,14 +50,14 @@ describe('xmlNormalize', () => {
         test('simple remove', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                removePath: 'root.subnode[].node[]',
+                removePath: '/root/subnode/node',
                 in: '<root><subnode><node id="2">text2</node><node id="1">text1</node></subnode></root>'
             })).toEqual('<root><subnode/></root>');
         });
         test('remove multiple sub nodes', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                removePath: 'root.subnode[].node[]',
+                removePath: '/root/subnode/node',
                 in: '<root>' +
                     '<subnode>' +
                     '<node id="2">text2</node>' +
@@ -73,7 +73,7 @@ describe('xmlNormalize', () => {
         test('remove specific sub nodes', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                removePath: 'root.subnode[0].node[1]',
+                removePath: '/root/subnode[1]/node[2]',
                 in: '<root>' +
                     '<subnode>' +
                     '<node>text2</node>' +
@@ -96,7 +96,7 @@ describe('xmlNormalize', () => {
         test('remove specific sub nodes and whitespace', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                removePath: 'root.subnode[0].node[1]',
+                removePath: '/root/subnode[1]/node[2]',
                 in: '<root>\n' +
                     ' <subnode>\n' +
                     '  <node>text2</node>\n' +
@@ -119,7 +119,7 @@ describe('xmlNormalize', () => {
         test('remove all sub nodes and whitespace', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
-                removePath: 'root.subnode[0].node[]',
+                removePath: '/root/subnode[1]/node',
                 in: '<root>\n' +
                     ' <subnode>\n' +
                     '  <node>text2</node>\n' +

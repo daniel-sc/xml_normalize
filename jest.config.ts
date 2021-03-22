@@ -6,6 +6,6 @@ const config: Config.InitialOptions = {
     testEnvironment: 'node',
     verbose: false,
     testMatch: undefined,
-    testRegex: '.*\.test\.ts'
+    testRegex: '.*\.test\.ts$'
 };
 export default config;

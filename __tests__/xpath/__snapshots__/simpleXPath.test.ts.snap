@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`simpleXPath Evaluator evalNodeSet should get simple set 1`] = `
+Array [
+  XmlElement {
+    "attr": Object {
+      "id": "2",
+    },
+    "children": Array [
+      XmlTextNode {
+        "text": "text2",
+      },
+    ],
+    "column": 58,
+    "firstChild": XmlTextNode {
+      "text": "text2",
+    },
+    "lastChild": XmlTextNode {
+      "text": "text2",
+    },
+    "line": 0,
+    "name": "node",
+    "position": 58,
+    "startTagPosition": 46,
+    "val": "text2",
+  },
+  XmlElement {
+    "attr": Object {
+      "id": "4",
+    },
+    "children": Array [
+      XmlTextNode {
+        "text": "text4",
+      },
+    ],
+    "column": 133,
+    "firstChild": XmlTextNode {
+      "text": "text4",
+    },
+    "lastChild": XmlTextNode {
+      "text": "text4",
+    },
+    "line": 0,
+    "name": "node",
+    "position": 133,
+    "startTagPosition": 121,
+    "val": "text4",
+  },
+]
+`;
+
+exports[`simpleXPath Evaluator evalNodeSet should get wildcard 1`] = `
+Array [
+  XmlElement {
+    "attr": Object {
+      "id": "1",
+    },
+    "children": Array [
+      XmlTextNode {
+        "text": "text1",
+      },
+    ],
+    "column": 31,
+    "firstChild": XmlTextNode {
+      "text": "text1",
+    },
+    "lastChild": XmlTextNode {
+      "text": "text1",
+    },
+    "line": 0,
+    "name": "node",
+    "position": 31,
+    "startTagPosition": 19,
+    "val": "text1",
+  },
+  XmlElement {
+    "attr": Object {
+      "id": "3",
+    },
+    "children": Array [
+      XmlTextNode {
+        "text": "text3",
+      },
+    ],
+    "column": 127,
+    "firstChild": XmlTextNode {
+      "text": "text3",
+    },
+    "lastChild": XmlTextNode {
+      "text": "text3",
+    },
+    "line": 0,
+    "name": "node",
+    "position": 127,
+    "startTagPosition": 115,
+    "val": "text3",
+  },
+  XmlElement {
+    "attr": Object {
+      "id": "4",
+    },
+    "children": Array [
+      XmlTextNode {
+        "text": "text4",
+      },
+    ],
+    "column": 154,
+    "firstChild": XmlTextNode {
+      "text": "text4",
+    },
+    "lastChild": XmlTextNode {
+      "text": "text4",
+    },
+    "line": 0,
+    "name": "node",
+    "position": 154,
+    "startTagPosition": 142,
+    "val": "text4",
+  },
+]
+`;

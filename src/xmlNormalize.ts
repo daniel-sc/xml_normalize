@@ -5,7 +5,7 @@ import {Evaluator} from './xpath/simpleXPath';
 export interface XmlNormalizeOptions {
     in: string;
     sortPath?: string;
-    removePath?: string;
+    removePath?: string[];
     /** default: `false` */
     debug?: boolean;
     /** default: `true` */
@@ -98,13 +98,11 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
 
     // console.debug(`parsed: ${util.inspect(inParsed, false, null)}`);
 
+    options.removePath?.forEach(removePath => doc = remove(doc, removePath));
+
     if (options.sortPath) {
         const [sortP, sortAttr] = splitOnLast(options.sortPath, '/@');
         doc = sort(doc, sortP, sortAttr);
-    }
-
-    if (options.removePath) {
-        doc = remove(doc, options.removePath);
     }
 
     if ((options.trim ?? true) || (options.trimForce ?? false) || (options.normalizeWhitespace ?? false)) {

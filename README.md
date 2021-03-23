@@ -15,23 +15,23 @@ This can be used as a post-/pre-processing step to keep diffs small for generate
 
 ## Usage
 
-Execute with NodeJS:
+Either install via `npm i -g xml_normalize` or run directly with `npx xml_normalize`.
 
 ```text
 Usage: npx xml_normalize [options]
 
 Options:
-  -i, --input-file <inputFile>    input file
-  -o, --output-file <outputFile>  output file - if not provided result is printed to stdout
-  -s, --sort-path <sortPath>      simple XPath that references an attribute to sort - e.g. "/html/head[1]/script@src"
-  -r, --remove-path <removePath>  simple XPath to remove elements - e.g. "/html/head[1]/script"
-  --no-pretty                     Disable pretty format output
-  --no-trim                       Disable trimming of whitespace at the beginning and end of text nodes (trims only pure text nodes)
-  --no-attribute-trim             Disable trimming whitespace at the beginning and end of attribute values
-  -tf, --trim-force               Trim the whitespace at the beginning and end of text nodes (trims as well text adjacent to nested nodes)
-  -n, --normalize-whitespace      Normalize whitespaces inside text nodes and attribute values
-  -d, --debug                     enable debug output
-  -h, --help                      display help for command
+  -i, --input-file <inputFile>       input file
+  -o, --output-file <outputFile>     output file - if not provided result is printed to stdout
+  -r, --remove-path <removePath...>  simple XPath(s) to remove elements - e.g. "/html/head[1]/script"
+  -s, --sort-path <sortPath>         simple XPath that references an attribute to sort - e.g. "/html/head[1]/script/@src"
+  --no-pretty                        Disable pretty format output
+  --no-trim                          Disable trimming of whitespace at the beginning and end of text nodes (trims only pure text nodes)
+  --no-attribute-trim                Disable trimming whitespace at the beginning and end of attribute values
+  -tf, --trim-force                  Trim the whitespace at the beginning and end of text nodes (trims as well text adjacent to nested nodes)
+  -n, --normalize-whitespace         Normalize whitespaces inside text nodes and attribute values
+  -d, --debug                        enable debug output
+  -h, --help                         display help for command
 ```
 
 ## Options and Examples
@@ -57,7 +57,7 @@ Example:
 </root>
 ```
 
-`npx xml_normalize -s /root/node/child@id` will create:
+`npx xml_normalize -s /root/node/child/@id` will create:
 
 ```xml
 <root>
@@ -104,7 +104,7 @@ Example:
 </root>
 ```
 
-`npx xml_normalize -r root.node[].child[]` instead will create:
+`npx xml_normalize -r /root/node/child` instead, will create:
 
 ```xml
 <root>
@@ -162,7 +162,7 @@ Supported:
   * `starts-with(str,prefix)`
   * `contains(str,contained)`
 * Node wildcard - e.g `/root/*` to select all nodes in `root` of any type.  
-* Attribute reference in last node - e.g. `/root/node@id`.
+* Attribute reference in last node - e.g. `/root/node/@id`.
 
 
 ## What is this good for?

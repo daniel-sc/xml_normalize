@@ -39,7 +39,7 @@ const outString = xmlNormalize({
 
 if (options.outputFile) {
     console.debug(`writing output to file ${(options.outputFile)}`);
-    fs.writeFileSync(options.outputFile, '<?xml version="1.0" encoding="UTF-8"?>\n' + outString, {encoding: 'utf8'});
+    fs.writeFileSync(options.outputFile, outString, {encoding: 'utf8'});
 } else {
     console.log(outString);
 }

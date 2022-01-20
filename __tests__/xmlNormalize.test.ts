@@ -137,6 +137,30 @@ describe('xmlNormalize', () => {
                     ' </subnode>\n' +
                     '</root>');
         });
+        test('remove with node matcher', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                removePath: ['/root/subnode/node[starts-with(@id,"rem")]'],
+                in: '<root>\n' +
+                    ' <subnode>\n' +
+                    '  <node id="stay1">text2</node>\n' +
+                    '  <node id="rem1">text1</node>\n' +
+                    ' </subnode>\n' +
+                    ' <subnode>\n' +
+                    '  <node id="stay2">text3</node>\n' +
+                    '  <node id="rem2">text4</node>\n' +
+                    ' </subnode>\n' +
+                    '</root>'
+            }))
+                .toEqual('<root>\n' +
+                    ' <subnode>\n' +
+                    '  <node id="stay1">text2</node>\n' +
+                    ' </subnode>\n' +
+                    ' <subnode>\n' +
+                    '  <node id="stay2">text3</node>\n' +
+                    ' </subnode>\n' +
+                    '</root>');
+        });
     });
 
     describe('trim', () => {

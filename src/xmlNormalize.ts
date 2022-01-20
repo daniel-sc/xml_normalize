@@ -1,5 +1,5 @@
 import {XmlDocument, XmlElement, XmlNode, XmlTextNode} from 'xmldoc';
-import {allChildren, getNestedAttributes, splitOnLast} from './objectUtils';
+import {allChildren, splitOnLast} from './objectUtils';
 import {Evaluator} from './xpath/simpleXPath';
 
 export interface XmlNormalizeOptions {

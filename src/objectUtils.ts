@@ -1,5 +1,4 @@
 import {XmlElement, XmlNode} from 'xmldoc';
-import util from 'util';
 
 export function splitOnLast(str: string, sep: string): [first: string, rest: string] {
     const indexOfLast = str.lastIndexOf(sep);
@@ -39,7 +38,7 @@ export function getNestedAttributes(obj: XmlElement, path: string): XmlElement[]
     return path
         .split('.')
         .filter(part => !!part)
-        .reduce(((previousValue, currentValue, i, a) => {
+        .reduce(((previousValue, currentValue) => {
             console.debug(`considering part=${currentValue}`);
             const [tagName, nodeIndex] = splitNameAndIndex(currentValue);
             console.debug(`tagName=${tagName} nodeIndex=${nodeIndex}`);

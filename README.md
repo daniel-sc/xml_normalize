@@ -1,5 +1,6 @@
 [![npm](https://img.shields.io/npm/v/xml_normalize)](https://www.npmjs.com/package/xml_normalize)
 [![Coverage Status](https://coveralls.io/repos/github/daniel-sc/xml_normalize/badge.svg?branch=main)](https://coveralls.io/github/daniel-sc/xml_normalize?branch=main)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/daniel-sc/xml_normalize.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/daniel-sc/xml_normalize/context:javascript)
 
 # XML Normalize
 

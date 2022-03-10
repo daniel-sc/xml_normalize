@@ -117,7 +117,7 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
         doc = pretty(doc);
     }
 
-    const xmlDecMatch = options.in.match(/^<\?xml .*[^>]\s*/i);
+    const xmlDecMatch = options.in.match(/^<\?xml [^>]*>\s*/i);
     const xmlDeclaration = xmlDecMatch ? xmlDecMatch[0] : '';
 
     return xmlDeclaration + doc.toString({preserveWhitespace: true, compressed: true});

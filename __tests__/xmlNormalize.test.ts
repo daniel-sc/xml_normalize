@@ -7,6 +7,10 @@ describe('xmlNormalize', () => {
         expect(xmlNormalize({...defaultOptions, in: '<root><node>text</node><node>text2</node></root>'}))
             .toEqual('<root><node>text</node><node>text2</node></root>');
     });
+    test('handle xml declaration without new line', () => {
+        expect(xmlNormalize({...defaultOptions, in: '<?xml version="1.0"?><root><node>text</node><node>text2</node></root>'}))
+            .toEqual('<?xml version="1.0"?><root><node>text</node><node>text2</node></root>');
+    });
 
     describe('sort', () => {
         test('simple sort', () => {

@@ -33,11 +33,11 @@ export class Evaluator {
                 if (stepIndex === 0 && path.absolute) {
                     nodeSet = this.matchesNodeTest(context, s.nodeTest) && this.matchesPredicate(context, 0, s.predicate) ? [context] : [];
                 } else if (stepIndex === path.steps.length - 1 && s.axis === 'attribute') {
-                    nodeSet = (nodeSet as NodeSet).reduce((all, n, i) => {
+                    nodeSet = (nodeSet as NodeSet).reduce((all, n) => {
                         return [...all, this.evalNodeSetStep(n, s) as string];
                     }, [] as ValueSet);
                 } else {
-                    nodeSet = (nodeSet as NodeSet).reduce((all, n, i) => {
+                    nodeSet = (nodeSet as NodeSet).reduce((all, n) => {
                         return [...all, ...this.evalNodeSetStep(n, s) as NodeSet];
                     }, [] as NodeSet);
                 }
@@ -82,7 +82,7 @@ export class Evaluator {
         }
     }
 
-    * allChildren(el: XmlNode, includeEl = true): IterableIterator<XmlNode> {
+    * allChildren(el: XmlNode = this.doc, includeEl = true): IterableIterator<XmlNode> {
         if (includeEl) {
             yield el;
         }

@@ -1,4 +1,4 @@
-import {XmlElement, XmlNode} from 'xmldoc';
+import {XmlElement} from 'xmldoc';
 
 export function splitOnLast(str: string, sep: string): [first: string, rest: string] {
     const indexOfLast = str.lastIndexOf(sep);
@@ -11,20 +11,6 @@ export function splitNameAndIndex(nameAndOptionalIndex: string): [name: string, 
         return [nameAndOptionalIndex, 0];
     } else {
         return [match[1], match.length > 2 && match[2] !== '' && match[2] !== undefined ? parseInt(match[2]) : null];
-    }
-}
-
-/**
- * @deprecated use Evaluator
- */
-export function* allChildren(el: XmlNode, includeEl = true): IterableIterator<XmlNode> {
-    if (includeEl) {
-        yield el;
-    }
-    if (el.type === 'element') {
-        for (const c of el.children) {
-            yield* allChildren(c, true);
-        }
     }
 }
 

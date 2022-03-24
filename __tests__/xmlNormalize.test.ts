@@ -47,6 +47,13 @@ describe('xmlNormalize', () => {
                 '<subnode><node id="4">text1</node><node id="5">text2</node></subnode>' +
                 '</root>');
         });
+        test('keep mixed nodes level sort', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                sortPath: '/root/node/@id',
+                in: '<root>text<node id="2">text2</node><node id="1">text1</node></root>'
+            })).toEqual('<root>text<node id="1">text1</node><node id="2">text2</node></root>');
+        });
 
     });
 
@@ -244,6 +251,19 @@ describe('xmlNormalize', () => {
                 in: '<root><node> a  a</node><node> x  x <mixed>m  m</mixed></node></root>'
             }))
                 .toEqual('<root><node>a a</node><node>x x <mixed>m m</mixed></node></root>');
+
+        });
+        test('should keep single whitespace between nodes mixed with text', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                pretty: true,
+                normalizeWhitespace: true,
+                in: '<root><node> a  a</node>     <node> x  x <mixed>m  m</mixed>    <more-mix>b</more-mix></node></root>'
+            }))
+                .toEqual('<root>\n' +
+                    '  <node>a a</node>\n' +
+                    '  <node>x x <mixed>m m</mixed> <more-mix>b</more-mix></node>\n' +
+                    '</root>');
 
         });
         test('should not normalize text when disabled', () => {

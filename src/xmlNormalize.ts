@@ -1,5 +1,5 @@
 import {XmlDocument, XmlElement, XmlNode, XmlTextNode} from 'xmldoc';
-import {allChildren, splitOnLast} from './objectUtils';
+import {splitOnLast} from './objectUtils';
 import {Evaluator} from './xpath/simpleXPath';
 
 export interface XmlNormalizeOptions {
@@ -21,18 +21,24 @@ export interface XmlNormalizeOptions {
 }
 
 function trimTextNodes(doc: XmlDocument, trimMixed: boolean, normalize: boolean): XmlDocument {
-    for (const docElement of allChildren(doc)) {
+    for (const docElement of new Evaluator(doc).allChildren()) {
         if (docElement.type === 'element') {
             docElement.children.forEach(((value, index, arr) => {
-                if (value.type === 'text' && !isWhiteSpace(value)) {
-                    if (trimMixed || index === 0 || arr[index - 1].type !== 'element') {
-                        value.text = value.text.trimStart();
-                    }
-                    if (trimMixed || index === arr.length - 1 || arr[index + 1].type !== 'element') {
-                        value.text = value.text.trimEnd();
-                    }
-                    if (normalize) {
-                        value.text = value.text.replace(/\s+/g, ' ');
+                if (value.type === 'text') {
+                    if (!isWhiteSpace(value)) {
+                        if (trimMixed || index === 0 || arr[index - 1].type !== 'element') {
+                            value.text = value.text.trimStart();
+                        }
+                        if (trimMixed || index === arr.length - 1 || arr[index + 1].type !== 'element') {
+                            value.text = value.text.trimEnd();
+                        }
+                        if (normalize) {
+                            value.text = value.text.replace(/\s+/g, ' ');
+                        }
+                    } else {
+                        if (normalize) {
+                            value.text = value.text.replace(/\s+/g, ' ');
+                        }
                     }
                 }
             }));
@@ -42,7 +48,7 @@ function trimTextNodes(doc: XmlDocument, trimMixed: boolean, normalize: boolean)
 }
 
 function trimAttributeValues(doc: XmlDocument, normalize: boolean) {
-    for (const docElement of allChildren(doc)) {
+    for (const docElement of new Evaluator(doc).allChildren()) {
         if (docElement.type === 'element') {
             Object.keys(docElement.attr)
                 .forEach(attrName => {
@@ -78,8 +84,9 @@ function addPrettyWhitespace(doc: XmlElement, indent: number) {
 
 function pretty(doc: XmlDocument) {
     // remove all whitespace text:
-    for (const node of allChildren(doc)) {
-        if (node.type === 'element') {
+    for (const node of new Evaluator(doc).allChildren()) {
+        // skip if mixed text and nodes:
+        if (node.type === 'element' && node.children.every(n => isWhiteSpace(n) || n.type !== 'text')) {
             removeChildren(node, ...node.children.filter(c => isWhiteSpace(c)));
         }
     }
@@ -143,7 +150,7 @@ function sort(parsed: XmlDocument, sortPath: string, sortAttribute: string) {
             if (a.type === 'element' && b.type === 'element') {
                 return a.attr[sortAttribute].localeCompare(b.attr[sortAttribute]);
             } else {
-                return 0;
+                return 0; // cannot happen
             }
         });
         doNotSortNodesWithIndex.forEach(nodeWithIndex => parent.children.splice(nodeWithIndex.index, 0, nodeWithIndex.el));

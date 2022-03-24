@@ -1,6 +1,6 @@
 {
   "name": "xml_normalize",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Normalizes xml files. Options include sorting siblings, remove nodes, whitespace normalization and pretty print.",
   "main": "dist/src/index.js",
   "bin": {

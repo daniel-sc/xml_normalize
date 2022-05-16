@@ -179,6 +179,10 @@ describe('xmlNormalize', () => {
             expect(xmlNormalize({...defaultOptions, trim: false, in: '<root><node> a </node><node> b </node></root>'}))
                 .toEqual('<root><node> a </node><node> b </node></root>');
         });
+        test('should not trim when disabled and normalizeWhitespace is enabled', () => {
+            expect(xmlNormalize({...defaultOptions, trim: false, normalizeWhitespace: true, in: '<root><node> a </node><node> b     b </node></root>'}))
+                .toEqual('<root><node> a </node><node> b b </node></root>');
+        });
         test('should trim when enabled', () => {
             expect(xmlNormalize({...defaultOptions, trim: true, in: '<root><node> a </node><node> b </node></root>'}))
                 .toEqual('<root><node>a</node><node>b</node></root>');

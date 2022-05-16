@@ -20,24 +20,20 @@ export interface XmlNormalizeOptions {
     pretty?: boolean;
 }
 
-function trimTextNodes(doc: XmlDocument, trimMixed: boolean, normalize: boolean): XmlDocument {
+function trimTextNodes(doc: XmlDocument, trim: boolean, trimMixed: boolean, normalize: boolean): XmlDocument {
     for (const docElement of new Evaluator(doc).allChildren()) {
         if (docElement.type === 'element') {
             docElement.children.forEach(((value, index, arr) => {
                 if (value.type === 'text') {
-                    if (!isWhiteSpace(value)) {
+                    if (normalize) {
+                        value.text = value.text.replace(/\s+/g, ' ');
+                    }
+                    if (trim && !isWhiteSpace(value)) {
                         if (trimMixed || index === 0 || arr[index - 1].type !== 'element') {
                             value.text = value.text.trimStart();
                         }
                         if (trimMixed || index === arr.length - 1 || arr[index + 1].type !== 'element') {
                             value.text = value.text.trimEnd();
-                        }
-                        if (normalize) {
-                            value.text = value.text.replace(/\s+/g, ' ');
-                        }
-                    } else {
-                        if (normalize) {
-                            value.text = value.text.replace(/\s+/g, ' ');
                         }
                     }
                 }
@@ -113,7 +109,7 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
     }
 
     if ((options.trim ?? true) || (options.trimForce ?? false) || (options.normalizeWhitespace ?? false)) {
-        doc = trimTextNodes(doc, options.trimForce ?? false, options.normalizeWhitespace ?? false);
+        doc = trimTextNodes(doc, options.trim ?? true, options.trimForce ?? false, options.normalizeWhitespace ?? false);
     }
 
     if ((options.attributeTrim ?? true) || (options.normalizeWhitespace ?? false)) {

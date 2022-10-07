@@ -26,7 +26,7 @@ function trimTextNodes(doc: XmlDocument, trim: boolean, trimMixed: boolean, norm
             docElement.children.forEach(((value, index, arr) => {
                 if (value.type === 'text') {
                     if (normalize) {
-                        value.text = value.text.replace(/\s+/g, ' ');
+                        value.text = value.text.replace(/\s{2,}/g, ' ');
                     }
                     if (trim && !isWhiteSpace(value)) {
                         if (trimMixed || index === 0 || arr[index - 1].type !== 'element') {

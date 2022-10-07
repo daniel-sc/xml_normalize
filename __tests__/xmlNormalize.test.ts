@@ -257,6 +257,15 @@ describe('xmlNormalize', () => {
                 .toEqual('<root><node>a a</node><node>x x <mixed>m m</mixed></node></root>');
 
         });
+        test('should keep single non-breaking spaces', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                normalizeWhitespace: true,
+                in: '<root><node> a  a</node><node> x x <mixed>m   m </mixed></node></root>'
+            }))
+                .toEqual('<root><node>a a</node><node>x x <mixed>m m</mixed></node></root>');
+
+        });
         test('should keep single whitespace between nodes mixed with text', () => {
             expect(xmlNormalize({
                 ...defaultOptions,

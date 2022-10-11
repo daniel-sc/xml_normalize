@@ -239,6 +239,23 @@ describe('xmlNormalize', () => {
                 .toEqual('<root><node id="a a">a</node><node id="b b">x<mixed>m</mixed></node></root>');
 
         });
+        test('should normalize attribute order', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                in: '<root><node x=" a   a" a="first">a</node><node b="   keep first " x="last">x<mixed>m</mixed></node></root>'
+            }))
+                .toEqual('<root><node a="first" x="a   a">a</node><node b="keep first" x="last">x<mixed>m</mixed></node></root>');
+
+        });
+        test('should not normalize attribute order', () => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                normalizeAttributeOrder: false,
+                in: '<root><node x=" a   a" a="first">a</node><node b="   keep first " x="last">x<mixed>m</mixed></node></root>'
+            }))
+                .toEqual('<root><node x="a   a" a="first">a</node><node b="keep first" x="last">x<mixed>m</mixed></node></root>');
+
+        });
         test('should not normalize attributes when disabled', () => {
             expect(xmlNormalize({
                 ...defaultOptions,

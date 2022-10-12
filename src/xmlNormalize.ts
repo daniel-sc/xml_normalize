@@ -18,7 +18,7 @@ export interface XmlNormalizeOptions {
     normalizeWhitespace?: boolean;
     /** default: `true` */
     pretty?: boolean;
-    /** default: `true` */
+    /** default: `false` */
     normalizeAttributeOrder?: boolean;
 }
 
@@ -122,7 +122,7 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
         doc = trimTextNodes(doc, options.trim ?? true, options.trimForce ?? false, options.normalizeWhitespace ?? false);
     }
 
-    const optionNormalizeAttributeOrder = options.normalizeAttributeOrder ?? true;
+    const optionNormalizeAttributeOrder = options.normalizeAttributeOrder ?? false;
     if ((options.attributeTrim ?? true) || (options.normalizeWhitespace ?? false) || optionNormalizeAttributeOrder) {
         doc = trimAttributeValues(doc, options.normalizeWhitespace ?? false, 
             options.attributeTrim ?? true,

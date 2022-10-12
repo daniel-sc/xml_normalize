@@ -18,6 +18,8 @@ export interface XmlNormalizeOptions {
     normalizeWhitespace?: boolean;
     /** default: `true` */
     pretty?: boolean;
+    /** default: `false` */
+    normalizeAttributeOrder?: boolean;
 }
 
 function trimTextNodes(doc: XmlDocument, trim: boolean, trimMixed: boolean, normalize: boolean): XmlDocument {
@@ -43,15 +45,23 @@ function trimTextNodes(doc: XmlDocument, trim: boolean, trimMixed: boolean, norm
     return doc;
 }
 
-function trimAttributeValues(doc: XmlDocument, normalize: boolean) {
+function trimAttributeValues(doc: XmlDocument, normalize: boolean, trim: boolean, sort: boolean) {
     for (const docElement of new Evaluator(doc).allChildren()) {
         if (docElement.type === 'element') {
-            Object.keys(docElement.attr)
+            const attributeValues = {...docElement.attr};
+            const attributeList = Object.keys(docElement.attr);
+            if (sort) {
+                attributeList.sort();
+                docElement.attr = {};
+            }
+            attributeList
                 .forEach(attrName => {
                     if (normalize) {
-                        docElement.attr[attrName] = docElement.attr[attrName].trim().replace(/\s+/g, ' ');
+                        docElement.attr[attrName] = attributeValues[attrName].trim().replace(/\s+/g, ' ');
+                    } else if(trim) {
+                        docElement.attr[attrName] = attributeValues[attrName].trim();
                     } else {
-                        docElement.attr[attrName] = docElement.attr[attrName].trim();
+                        docElement.attr[attrName] = attributeValues[attrName];
                     }
                 });
         }
@@ -112,8 +122,11 @@ export function xmlNormalize(options: XmlNormalizeOptions) {
         doc = trimTextNodes(doc, options.trim ?? true, options.trimForce ?? false, options.normalizeWhitespace ?? false);
     }
 
-    if ((options.attributeTrim ?? true) || (options.normalizeWhitespace ?? false)) {
-        doc = trimAttributeValues(doc, options.normalizeWhitespace ?? false);
+    const optionNormalizeAttributeOrder = options.normalizeAttributeOrder ?? false;
+    if ((options.attributeTrim ?? true) || (options.normalizeWhitespace ?? false) || optionNormalizeAttributeOrder) {
+        doc = trimAttributeValues(doc, options.normalizeWhitespace ?? false, 
+            options.attributeTrim ?? true,
+            optionNormalizeAttributeOrder);
     }
 
     if (options.pretty ?? true) {

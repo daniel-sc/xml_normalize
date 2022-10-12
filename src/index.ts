@@ -13,6 +13,7 @@ const options = new Command()
     .option('--no-pretty', 'Disable pretty format output')
     .option('--no-trim', 'Disable trimming of whitespace at the beginning and end of text nodes (trims only pure text nodes)')
     .option('--no-attribute-trim', 'Disable trimming whitespace at the beginning and end of attribute values')
+    .option('--normalize-attribute-order', 'Enable reordering of attributes')
     .option('-tf, --trim-force', 'Trim the whitespace at the beginning and end of text nodes (trims as well text adjacent to nested nodes)')
     .option('-n, --normalize-whitespace', 'Normalize whitespaces inside text nodes and attribute values')
     .option('-d, --debug', 'enable debug output')
@@ -34,6 +35,7 @@ const outString = xmlNormalize({
     trimForce: options.trimForce,
     attributeTrim: options.attributeTrim,
     normalizeWhitespace: options.normalizeWhitespace,
+    normalizeAttributeOrder: options.normalizeAttributeOrder,
     pretty: options.pretty
 });
 

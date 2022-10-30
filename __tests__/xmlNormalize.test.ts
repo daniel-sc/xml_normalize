@@ -274,6 +274,42 @@ describe('xmlNormalize', () => {
                 .toEqual('<root><node>a a</node><node>x x <mixed>m m</mixed></node></root>');
 
         });
+
+        test.each([
+            ['character tab', '\u0009'],
+            ['line feed', '\u000A'],
+            ['line tab', '\u000B'],
+            ['form feed', '\u000C'],
+            ['carriage return', '\u000D'],
+            ['space', '\u0020'],
+            // ['next line', '\u0085'],
+            ['no-break space', '\u00A0'],
+            // ['ogham space mark', '\u0680'],
+            ['en quad', '\u2000'],
+            ['em quad', '\u2001'],
+            ['en space', '\u2002'],
+            ['em space', '\u2003'],
+            ['three-per-em space', '\u2004'],
+            ['four-per-em space', '\u2005'],
+            ['six-per-em space', '\u2006'],
+            ['figure space', '\u2007'],
+            ['punctuation space', '\u2008'],
+            ['thin space', '\u2009'],
+            ['hair space', '\u200A'],
+            ['line separator', '\u2028'],
+            ['paragraph separator', '\u2029'],
+            ['narrow no-break space', '\u202F'],
+            ['medium mathematical space', '\u205F'],
+            ['ideographic space', '\u3000'],
+        ])('should normalize %s characters', (_, c) => {
+            expect(xmlNormalize({
+                ...defaultOptions,
+                normalizeWhitespace: true,
+                in: `<root><node>${c}a ${c}a${c}a${c} a</node><node>${c}x${c}${c}x${c}<mixed>m${c} ${c}m</mixed></node></root>`
+            }))
+                .toEqual('<root><node>a a a a</node><node>x x <mixed>m m</mixed></node></root>');
+
+        });
         test('should keep single whitespace between nodes mixed with text', () => {
             expect(xmlNormalize({
                 ...defaultOptions,
